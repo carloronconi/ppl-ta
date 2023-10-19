@@ -32,15 +32,15 @@
 (list-fruits) ; => apple, banana
 
 ;; Can you guess what these return?
-;; 1
+;; 1 - k1 is never called so when we call k0 with 3 we goto the first call/cc passing a 3, which just evaluates to that 3
 (call/cc (λ (k0)
            (+ 1 (call/cc (λ (k1)
                            (+ 1 (k0 3)))))))
-;; 2
+;; 2 -  evaluates to 4: I think because at last line you pass 3 to the "breakpoint" k1 so you go back to it with 3 and just perform (+ 1 3) => 4
 (call/cc (λ (k0)
            (+ 1 (call/cc (λ (k1)
                            (+ 1 (k0 (k1 3))))))))
-;; 3
+;; 3 - the final k0 overwrites previous evaluation so it just returns 1
 (call/cc (λ (k0)
            (+ 1
               (call/cc (λ (k1)
@@ -50,8 +50,8 @@
 ;; It get worse...
 (define x 0)
 
-(let ([cc (call/cc (λ (k) (k k)))])
-  (set! x (add1 x))
+(let ([cc (call/cc (λ (k) (k k)))]) ; calls the continuation (first k) with the continuation k itself as a parameter
+  (set! x (add1 x)) ; x++
   (displayln x)
   (if (< x 3)
       (cc cc) ; we're going back to the moment 'cc' is binded to the continuation 'k'.
@@ -83,7 +83,7 @@
              (displayln y))
 ; it will print 4 3 2 and then it will stop
 
-;; -- HARD EXAMPLE --
+;; -- HARD EXAMPLE -- [skipped]
 ;; GENERATORS - the 'yield' in Python/JavaScript
 ;; It's better to do it with simple closures, though!
 (define (gen-one lst)
