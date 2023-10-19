@@ -5,10 +5,9 @@
 
 (define *handlers* '()) ; stack data struct filled while running with procedures to handle
 ; *...* (called earmuffs) is a convention for mutable globals
-
+;; utils
 (define (push-handler proc)
   (set! *handlers* (cons proc *handlers*)))
-
 (define (pop-handler)
   (let ([head (car *handlers*)])
     (set! *handlers* (cdr *handlers*))
@@ -51,5 +50,6 @@
  (catch "bad-foo"
         ; handle the exception here
         (displayln "I caught a throw.")
-        #f))
+        #f)) ;=> #f
+; ...
 ; if we try to catch an unregistered exception, we'll have an error: contract violation

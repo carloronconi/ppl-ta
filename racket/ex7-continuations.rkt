@@ -2,7 +2,7 @@
 
 ;; CALL/CC
 ; kinda like time-travel
-; we're simply going back (or forward) to a saved call stack.
+; we're simply going back (or forward*) to a saved call stack.
 
 (define (now)
   (call/cc
@@ -31,6 +31,25 @@
 
 (list-fruits) ; => apple, banana
 
+;; Does calling a continuation affect other values?
+(displayln "foo:")
+(define foo-k #f) ; continuation
+(define (foo)
+  (let ([i 0])
+    (displayln i)
+    (call/cc (λ (k)
+               (set! i 3)
+               (displayln i) ; => 3
+               (set! foo-k k)
+               (set! i 5)
+               (displayln i) ; => 5
+               (foo-k)))
+    (displayln i))) ; => 5
+
+(foo)
+
+
+
 ;; Can you guess what these return?
 ;; 1 - k1 is never called so when we call k0 with 3 we goto the first call/cc passing a 3, which just evaluates to that 3
 (call/cc (λ (k0)
@@ -47,6 +66,11 @@
                            (+ 1 (k1 3))))
               (k0 1))))
 
+;; SOLUTIONS
+;; 1 => 3
+;; 2 => 4
+;; 3 => 1
+
 ;; It get worse...
 (define x 0)
 
@@ -61,25 +85,27 @@
               ; calling it. Try (cc 1) and it will fail.
       x))
 
+
 ;; RETURN - we can use call/cc to mimic the 'preemptive return' (just like in C)
 ; when we call it, we jump out of the function.
 
 ;; BREAK - we can use call/cc to break out of a loop
 (define-syntax while-break
   (syntax-rules (break-id:)
-    [(_ cond break-id: break-id body ...)
-     (call/cc (λ (break-id)
+    [(_ cond break-id: break body ...) ; 'break' will be replaced by the keyword we choose at runtime
+     (call/cc (λ (break)
        (let loop ()
          (when cond
            (begin body ...)
            (loop)))))]))
+
 
 (displayln "== BREAK ==")
 (define y 5)
 (while-break (> y 0) break-id: break ; <-- we need this last bit because of hygienic macros
                                      ; we can't call 'break' from outside the syntax-rule
              (when (= y 2) (break))
-             (set! y (sub1 y))
+             (set! y (sub1 y)) ; y -= 1
              (displayln y))
 ; it will print 4 3 2 and then it will stop
 
