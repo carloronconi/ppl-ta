@@ -16,7 +16,7 @@ data Food = Fruit | Dairy | Fish | Meat
 -- PRODUCT TYPES - like a struct
 -- data Point2D a = Point a a
 -- NOTE: Type Constr. and Data Constr. reside in separate namespaces. It means that we can call them both the same:
-data Point2d a = Point2d a a
+data Point2d a = Point2d a a deriving Show
 
 -- access is positional
 -- let's calc the manhattan distance for example:
@@ -37,7 +37,7 @@ getJustX Point2dAlt {pointX = x} = x
 
 -- RECURSIVE-TYPES
 -- we can also have recursive types - 🌲
-data Tree a = Leaf a | Branch (Tree a) (Tree a)
+data Tree a = Leaf a | Branch (Tree a) (Tree a) deriving Show
 
 myTree = Branch (Leaf 'a') (Branch (Leaf 'b') (Leaf 'c'))
 
@@ -47,3 +47,12 @@ myTree = Branch (Leaf 'a') (Branch (Leaf 'b') (Leaf 'c'))
 
 -- TYPE SYNONYMS - aliases for types to improve legibility
 type MyString = [Char] -- a string is just a list of chars
+
+----------------------------------------------------------------------
+-- I added this part!
+treeMap :: (a -> b) -> Tree a -> Tree b
+treeMap f (Leaf n) = Leaf (f n)
+treeMap f (Branch l r) = Branch (treeMap f l) (treeMap f r)
+-- usage in REPL:
+-- treeMap (\ n -> mod n 2 == 0) (Branch (Leaf 2) (Branch (Leaf 3) (Leaf 4)))
+-- = Branch (Leaf True) (Branch (Leaf False) (Leaf True))
