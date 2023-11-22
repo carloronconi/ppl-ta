@@ -2,3 +2,5 @@ slides/
 .DS_Store
 *.rkt~
 *.beam
+.idea/
+/racket/#ex4-structs.rkt#2#
