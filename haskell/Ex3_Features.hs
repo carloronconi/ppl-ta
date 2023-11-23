@@ -19,6 +19,8 @@ myList = [1, 2, 3, 4, 5]
 -- functions are applied RIGHT to LEFT:
 -- map (double . add1) myList returns a different result!
 
+compose = map ((2 *) . (1 +)) [1, 2, 3]
+
 -- we can reduce the number of parenthesis needed with the
 
 -- LET - is equal to (letrec* ...) of Racket
@@ -71,7 +73,7 @@ pytagoreanTriples =
 
 -- ZIP : take in parallel one element from each of two lists
 -- and makes a pair out of them
--- zip [1, 2, 3, 4, 5] ["hello"]
+myZip = zip [1, 2, 3, 4, 5] "hello"
 
 -- BOOLEAN GUARDS
 {-- let's make a function that calculates the Body Mass Index
@@ -137,15 +139,17 @@ head'' xs = case xs of
 -- Higher-Order Functions
 -- FOLDL, FOLDR, MAP, FILTER
 -- they work just like in scheme
-{-- Strict Foldl: Seq computes the Accumulator at each step
+-- NOTE BY ME: backticks turn standard prefix functions into infix operators
+-- Strict Foldl: Seq computes the Accumulator at each step
 foldl' f z (x:xs) =
   let z' = f z x in z' `seq` foldl' f z' xs
 
-  TRY THIS:
-  foldl (\x y -> 1) undefined [2] -- => 1
-  vs
-  foldl' (\x y -> 1) undefined [2] -- => error
---}
+-- TRY THIS:
+test1 = foldl (\x y -> 1) undefined [2] -- => 1
+-- vs
+test2 = foldl' (\x y -> 1) undefined [2] -- => error
+
+
 
 {-- COUPLE OF WORDS OF ADVICE from "Real World Haskell"
 Without some direction, there is an element of mystery to using seq effectively. Here are some useful rules for using it well.
