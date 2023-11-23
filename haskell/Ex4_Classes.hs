@@ -48,3 +48,22 @@ data Tree' a = Leaf' a | Branch' (Tree' a) (Tree' a)
   deriving (Show, Eq)
 
 -- Example of custom class?
+
+-- Added by me: custom class implementing isSymmetrical
+class (Eq a) => Symmetrical a where
+  isSym :: a -> Bool
+
+instance (Eq a) => Symmetrical (Tree' a) where
+  isSym (Leaf' a) = True
+  isSym (Branch' x y) = isSymTrees x y where
+    isSymTrees (Leaf' x) (Leaf' y) = x == y
+    isSymTrees (Leaf' _) (Branch' _ _) = False
+    isSymTrees (Branch' _ _) (Leaf' _) = False
+    isSymTrees (Branch' a b) (Branch' c d) = (a == d) && (b == c)
+
+myT1 = Branch' (Branch' (Leaf' 'a') (Leaf' 'b')) (Branch' (Leaf' 'b') (Leaf' 'a'))
+myT2 = Branch' (Branch' (Leaf' 'b') (Leaf' 'a')) (Branch' (Leaf' 'b') (Leaf' 'a'))
+myT3 = Branch' (Leaf' 'a') (Branch' (Leaf' 'b') (Leaf' 'a'))
+myList = [myT1, myT2, myT3]
+
+responses = map isSym myList
