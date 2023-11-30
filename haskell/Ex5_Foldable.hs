@@ -30,5 +30,24 @@ treeFoldr f z (Leaf x) = f x z -- apply f to the value of leaf
 treeFoldr f z (Branch l r) = treeFoldr f (treeFoldr f z r) l
 
 instance Foldable Tree where
-  foldr :: (a -> b -> b) -> b -> Tree a -> b
+  -- foldr :: (a -> b -> b) -> b -> Tree a -> b
   foldr = treeFoldr
+
+-- added by me: testing if ordering matters
+
+commutativeOp a b = a + b
+
+nonCommutativeOp a b = a - b
+
+treeFoldrSwapped f z Empty = z
+treeFoldrSwapped f z (Leaf x) = f z x -- HERE SWAPPED
+treeFoldrSwapped f z (Branch l r) = treeFoldrSwapped f (treeFoldrSwapped f z r) l
+
+tree = Branch (Leaf 1) (Branch (Leaf 2) (Leaf 3))
+nonCommNormal = treeFoldr nonCommutativeOp 10 tree
+nonCommSwapped = treeFoldrSwapped nonCommutativeOp 10 tree
+commNormal = treeFoldr commutativeOp 10 tree
+commSwapped = treeFoldrSwapped commutativeOp 10 tree
+
+-- as expected: with commutative operators, changing the foldr definition (with more natural swapped z & x) is equivalent to original definition
+-- while when using non commutative operators (such as minus) it DOES make a difference, so the swapped foldr definition is WRONG!

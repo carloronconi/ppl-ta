@@ -4,6 +4,7 @@ import Ex6_Functors (Result)
 
 -- if we do:
 -- :t (+) <$> Ok 3
+-- (+) <$> Ok 3 :: Num a => Result (a -> a)
 -- we get a function and a value both wrapped into Ok (Result), but with no way to apply
 -- one to the other.
 

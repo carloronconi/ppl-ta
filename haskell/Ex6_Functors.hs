@@ -38,7 +38,7 @@ instance Functor Result where
 -- and returns a container of B
 -- In a nutshell, a FUNCTOR applies a FUNCTION to ITS (the functor's) content
 
-data Tree a = Empty | Leaf a | Branch (Tree a) (Tree a)
+data Tree a = Empty | Leaf a | Branch (Tree a) (Tree a) deriving Show
 
 instance Functor Tree where
   fmap _ Empty = Empty
