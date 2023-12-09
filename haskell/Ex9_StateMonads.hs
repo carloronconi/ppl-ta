@@ -15,6 +15,8 @@ pop (x : xs) = (x, xs)
 push :: Int -> Stack -> ((), Stack)
 push a xs = ((), a : xs)
 
+-- Let's try to use the pop/push operations in a function:
+-- we take a Stack as input, push 3, pop, then pop again
 stackManip :: Stack -> (Int, Stack)
 stackManip stack =
   let ((), newStack1) = push 3 stack
