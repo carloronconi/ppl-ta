@@ -49,6 +49,7 @@ bad_proc() ->
     io:format("I am a child process and I'm gonna crash.~n"),
     4 / 0.
 
+% example showing that if you don't use spawn_link crashes are not notified to the parent with a message
 test_spawn() ->
     process_flag(trap_exit, true),
     Pid = spawn(fun() -> bad_proc() end),
@@ -58,8 +59,11 @@ test_spawn() ->
     % ANSWER: behaves the same as test_spawn_link/0
     receive
         Err -> io:format("Received message from child: ~p~n", [Err])
+        % here instead of just capturing error you could do {’EXIT’, Child, _} to capture which children has died
+        % to handle it (see theory slides)
     end.
 
+% with spawn_link instead, children crashes are notified to the parent with an Err message
 test_spawn_link() ->
     process_flag(trap_exit, true),
     Pid = spawn_link(fun() -> bad_proc() end),
@@ -67,7 +71,8 @@ test_spawn_link() ->
         Err -> io:format("Received message from child: ~p~n", [Err])
     end.
 
-%% Test that child lives if parent dies
+% Test that child lives if parent dies: by default (using spawn) if the parent dies the children are unaffected
+% if instead of spawn we use spawn_link alle the children die as soon as the parent dies
 dying_parent(N) ->
     spawn(fun() -> child(N) end),
     io:format("[P] I'm gonna die soon...~n"),
