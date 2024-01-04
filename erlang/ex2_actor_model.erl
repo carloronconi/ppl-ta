@@ -71,8 +71,9 @@ test_spawn_link() ->
         Err -> io:format("Received message from child: ~p~n", [Err])
     end.
 
-% Test that child lives if parent dies: by default (using spawn) if the parent dies the children are unaffected
-% if instead of spawn we use spawn_link alle the children die as soon as the parent dies
+% Test that child lives if parent dies with exit(ok): by default (using spawn) if the parent dies the children are unaffected
+% if instead of spawn we use spawn_link alle the children die as soon as the parent dies using exit(ok). If it didn't use
+% exit(ok) and just ended with "end." the spawn_link'ed children would keep living.
 dying_parent(N) ->
     spawn(fun() -> child(N) end),
     io:format("[P] I'm gonna die soon...~n"),
